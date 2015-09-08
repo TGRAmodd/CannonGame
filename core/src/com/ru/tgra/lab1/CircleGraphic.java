@@ -20,16 +20,7 @@ public class CircleGraphic {
 		vertexBuffer = BufferUtils.newFloatBuffer(2 * verticesPerCircle);
 		
 		//VERTEX ARRAY IS FILLED HERE
-		/*
-		float[] array = {-50.0f, 50.0f,
-						-50.0f, -50.0f,
-						50.0f, -50.0f,
-						50.0f, 50.0f};
-						
-		float[] array = new float[2*verticesPerCircle];
-		vertexBuffer = BufferUtils.newFloatBuffer(8);
-		vertexBuffer.put(array);
-		*/
+		
 		double f = 0.0f;
 		for (int i = 0; i < verticesPerCircle; i++)
 		{

@@ -101,6 +101,8 @@ public class Lab1Game extends ApplicationAdapter {
 		vertexBuffer = BufferUtils.newFloatBuffer(8);
 		vertexBuffer.put(array);
 		vertexBuffer.rewind();
+		
+		CircleGraphic.create(positionLoc);
 	}
 	
 	private void update()
@@ -115,7 +117,13 @@ public class Lab1Game extends ApplicationAdapter {
 	
 	private void display()
 	{
+		Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		setModelMatrixTranslation(550.5f, 400.7f);
+		setModelMatrixScale(17.1f, 17.1f);
+		
+		CircleGraphic.drawSolidCircle();
 		//do all actual drawing and rendering here
 	}
 
