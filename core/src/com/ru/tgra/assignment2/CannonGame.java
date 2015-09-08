@@ -1,4 +1,4 @@
-package com.ru.tgra.lab1;
+package com.ru.tgra.assignment2;
 
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 
 import com.badlogic.gdx.utils.BufferUtils;
 
-public class Lab1Game extends ApplicationAdapter {
+public class CannonGame extends ApplicationAdapter {
 	
 	private FloatBuffer vertexBuffer;
 
@@ -111,6 +111,8 @@ public class Lab1Game extends ApplicationAdapter {
 		{
 			//do mouse/touch input stuff
 		}
+		
+		
 
 		//do all updates to the game
 	}

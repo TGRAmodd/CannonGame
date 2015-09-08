@@ -2,7 +2,7 @@ package com.ru.tgra.lab1.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.ru.tgra.lab1.Lab1Game;
+import com.ru.tgra.assignment2.CannonGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -12,6 +12,6 @@ public class DesktopLauncher {
 		config.width = 1024;  //experiment with
 		config.height = 768;  //the window size
 
-		new LwjglApplication(new Lab1Game(), config);
+		new LwjglApplication(new CannonGame(), config);
 	}
 }

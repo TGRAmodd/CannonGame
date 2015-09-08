@@ -1,4 +1,4 @@
-package com.ru.tgra.lab1;
+package com.ru.tgra.assignment2;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
