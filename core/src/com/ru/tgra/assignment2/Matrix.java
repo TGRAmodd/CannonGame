@@ -71,6 +71,8 @@ public class Matrix {
 		matrix.put(15, m15);
 	}
 	
+	
+	
 	public void setShaderMatrix(int shaderMatrixPointer)
 	{
 		Gdx.gl.glUniformMatrix4fv(shaderMatrixPointer, 1, false, matrix);

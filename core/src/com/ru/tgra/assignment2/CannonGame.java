@@ -3,6 +3,7 @@ package com.ru.tgra.assignment2;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 
 import java.nio.FloatBuffer;
@@ -13,7 +14,7 @@ public class CannonGame extends ApplicationAdapter {
 	
 	private FloatBuffer vertexBuffer;
 
-	private FloatBuffer modelMatrix;
+	private FloatBuffer modelMatrixBuffer;
 	private FloatBuffer projectionMatrix;
 
 	private int renderingProgramID;
@@ -26,6 +27,10 @@ public class CannonGame extends ApplicationAdapter {
 	private int projectionMatrixLoc;
 
 	private int colorLoc;
+	
+	private ModelMatrix modelMatrix;
+	
+	private float angle = 0.0f;
 
 	@Override
 	public void create () {
@@ -82,11 +87,11 @@ public class CannonGame extends ApplicationAdapter {
 		mm[2] = 0.0f; mm[6] = 0.0f; mm[10] = 1.0f; mm[14] = 0.0f;
 		mm[3] = 0.0f; mm[7] = 0.0f; mm[11] = 0.0f; mm[15] = 1.0f;
 
-		modelMatrix = BufferUtils.newFloatBuffer(16);
-		modelMatrix.put(mm);
-		modelMatrix.rewind();
+		modelMatrixBuffer = BufferUtils.newFloatBuffer(16);
+		modelMatrixBuffer.put(mm);
+		modelMatrixBuffer.rewind();
 
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrix);
+		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 
 		//COLOR IS SET HERE
 		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0, 1);
@@ -104,10 +109,30 @@ public class CannonGame extends ApplicationAdapter {
 		
 		CircleGraphic.create(positionLoc);
 		CannonGraphic.create(positionLoc);
+		
+		modelMatrix = new ModelMatrix();
+		modelMatrix.loadIdentityMatrix();
 	}
 	
 	private void update()
 	{
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
+		{
+			angle -= 20.0f * deltaTime;
+		}
+		
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+		{
+			angle += 20.0f * deltaTime;
+		}
+		
+		angle += 180.0f *deltaTime;
+		
+		
+		
+		
 		if(Gdx.input.justTouched())
 		{
 			//do mouse/touch input stuff
@@ -127,7 +152,10 @@ public class CannonGame extends ApplicationAdapter {
 		setModelMatrixScale(17.1f, 17.1f);
 		
 		//CircleGraphic.drawSolidCircle();
+		modelMatrix.addRotationZ(angle);
+		//modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();
+		
 		//do all actual drawing and rendering here
 	}
 
@@ -143,37 +171,22 @@ public class CannonGame extends ApplicationAdapter {
 
 	private void clearModelMatrix()
 	{
-		modelMatrix.put(0, 1.0f);
-		modelMatrix.put(1, 0.0f);
-		modelMatrix.put(2, 0.0f);
-		modelMatrix.put(3, 0.0f);
-		modelMatrix.put(4, 0.0f);
-		modelMatrix.put(5, 1.0f);
-		modelMatrix.put(6, 0.0f);
-		modelMatrix.put(7, 0.0f);
-		modelMatrix.put(8, 0.0f);
-		modelMatrix.put(9, 0.0f);
-		modelMatrix.put(10, 1.0f);
-		modelMatrix.put(11, 0.0f);
-		modelMatrix.put(12, 0.0f);
-		modelMatrix.put(13, 0.0f);
-		modelMatrix.put(14, 0.0f);
-		modelMatrix.put(15, 1.0f);
+		 
 
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrix);
+		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 	}
 	private void setModelMatrixTranslation(float xTranslate, float yTranslate)
 	{
-		modelMatrix.put(12, xTranslate);
-		modelMatrix.put(13, yTranslate);
+		modelMatrixBuffer.put(12, xTranslate);
+		modelMatrixBuffer.put(13, yTranslate);
 
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrix);
+		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 	}
 	private void setModelMatrixScale(float xScale, float yScale)
 	{
-		modelMatrix.put(0, xScale);
-		modelMatrix.put(5, yScale);
+		modelMatrixBuffer.put(0, xScale);
+		modelMatrixBuffer.put(5, yScale);
 
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrix);
+		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 	}
 }
