@@ -103,6 +103,7 @@ public class CannonGame extends ApplicationAdapter {
 		vertexBuffer.rewind();
 		
 		CircleGraphic.create(positionLoc);
+		CannonGraphic.create(positionLoc);
 	}
 	
 	private void update()
@@ -122,10 +123,11 @@ public class CannonGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		setModelMatrixTranslation(550.5f, 400.7f);
+		setModelMatrixTranslation(500.0f, 50.0f);
 		setModelMatrixScale(17.1f, 17.1f);
 		
-		CircleGraphic.drawSolidCircle();
+		//CircleGraphic.drawSolidCircle();
+		CannonGraphic.drawCannon();
 		//do all actual drawing and rendering here
 	}
 

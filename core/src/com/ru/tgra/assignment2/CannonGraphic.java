@@ -17,10 +17,10 @@ public class CannonGraphic {
 		CannonGraphic.vertexPointer = vertexPointer;
 		
 		//VERTEX ARRAY IS FILLED HERE
-				float[] array = {-0.5f, 0.5f,
-								-0.5f, -0.5f,
-								0.5f, -0.5f,
-								0.5f, 0.5f};
+				float[] array = {-1.5f, 3.8f,
+								-1.5f, -3.8f,
+								1.5f, -3.8f,
+								1.5f, 3.8f};
 
 				vertexBuffer = BufferUtils.newFloatBuffer(8);
 				vertexBuffer.put(array);
