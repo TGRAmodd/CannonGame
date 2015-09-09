@@ -153,8 +153,9 @@ public class CannonGame extends ApplicationAdapter {
 		
 		//CircleGraphic.drawSolidCircle();
 		modelMatrix.addRotationZ(angle);
-		//modelMatrix.setShaderMatrix(modelMatrixLoc);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();
+		//clearModelMatrix();
 		
 		//do all actual drawing and rendering here
 	}
@@ -171,8 +172,6 @@ public class CannonGame extends ApplicationAdapter {
 
 	private void clearModelMatrix()
 	{
-		 
-
 		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 	}
 	private void setModelMatrixTranslation(float xTranslate, float yTranslate)
