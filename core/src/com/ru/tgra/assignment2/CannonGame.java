@@ -120,12 +120,18 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
 		{
-			angle += 20.0f * deltaTime;
+			if(angle < 60)
+			{
+				angle += 30.0f * deltaTime;
+			}
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 		{
-			angle -= 20.0f * deltaTime;
+			if(angle > -60)
+			{
+				angle -= 30.0f * deltaTime;
+			}
 		}
 		
 		//angle += 180.0f *deltaTime;
