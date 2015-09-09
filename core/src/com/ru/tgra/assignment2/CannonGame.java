@@ -132,7 +132,7 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
 		{
-			if(angle < 90)
+			if(angle < 70)
 			{
 				angle += 30.0f * deltaTime;
 			}
@@ -140,7 +140,7 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 		{
-			if(angle > -90)
+			if(angle > -70)
 			{
 				angle -= 30.0f * deltaTime;
 			}
@@ -148,21 +148,20 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			pressed = true;
-			
-			if ((xPos > 520.0f) || (xPos < -520.0f) || (yPos > 1040.0f))
+			if ((xPos > 520.0f) || (xPos < -520.0f) || (yPos > 1040.0f) || (pressed == false))
 			{
-				xPos = 0.0f;
-				yPos = 0.0f;
-				xAngle = (-angle) * 2 * deltaTime;
-				yAngle = (90.0f - Math.abs(angle)) * 2 * deltaTime;
+				xAngle = (-angle);
+				yAngle = (90.0f - Math.abs(angle));
+				xPos = (xAngle / 90.0f) * 20.0f;
+				yPos = (yAngle / 90.0f) * 30.0f ;
 			}
+			pressed = true;
 		}
 		
 		if (pressed == true)
 		{
-			xPos += xAngle;
-			yPos += yAngle;
+			xPos += xAngle * 2 * deltaTime;
+			yPos += yAngle * 2 * deltaTime;
 		}
 		
 		
@@ -197,7 +196,9 @@ public class CannonGame extends ApplicationAdapter {
 		
 		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addTranslation(512.0f, 0, 0);
+		
 		//Drawing the cannon
+		//modelMatrix.addScale(10.0f, 10.0f, 0);
 		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 0);
 		modelMatrix.addRotationZ(angle);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
