@@ -118,7 +118,7 @@ public class CannonGame extends ApplicationAdapter {
 		modelMatrix.loadIdentityMatrix();
 		
 		xPos = 0.0f;
-		yPos = 20.0f;
+		yPos = 0.0f;
 		pressed = false;
 	}
 	
@@ -128,25 +128,34 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
 		{
-			angle += 20.0f * deltaTime;
+			if(angle < 90)
+			{
+				angle += 30.0f * deltaTime;
+			}
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 		{
-			angle -= 20.0f * deltaTime;
+			if(angle > -90)
+			{
+				angle -= 30.0f * deltaTime;
+			}
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
 			pressed = true;
+			
+			//if ()
 			xPos = 0.0f;
-			yPos = 20.0f;
+			yPos = 0.0f;
 		}
 		
 		//angle += 180.0f *deltaTime;
 		if (pressed == true)
 		{
-			yPos += 30.0f * deltaTime;
+			xPos += (-angle) * 2 * deltaTime;
+			yPos += (90.0f - Math.abs(angle)) * 2 * deltaTime;
 		}
 		
 		
@@ -170,7 +179,7 @@ public class CannonGame extends ApplicationAdapter {
 		//setModelMatrixScale(17.1f, 17.1f);
 		
 		modelMatrix.loadIdentityMatrix();
-		modelMatrix.addTranslation(500.0f, 0, 0);
+		modelMatrix.addTranslation(512.0f, 0, 0);
 
 		//Drawing the ball
 		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0.4f, 1);
@@ -180,7 +189,7 @@ public class CannonGame extends ApplicationAdapter {
 		CircleGraphic.drawSolidCircle();
 		
 		modelMatrix.loadIdentityMatrix();
-		modelMatrix.addTranslation(500.0f, 0, 0);
+		modelMatrix.addTranslation(512.0f, 0, 0);
 		//Drawing the cannon
 		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 0);
 		modelMatrix.addRotationZ(angle);
