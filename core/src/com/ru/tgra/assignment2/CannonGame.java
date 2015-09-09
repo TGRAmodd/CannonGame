@@ -120,12 +120,12 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
 		{
-			angle -= 20.0f * deltaTime;
+			angle += 20.0f * deltaTime;
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
 		{
-			angle += 20.0f * deltaTime;
+			angle -= 20.0f * deltaTime;
 		}
 		
 		//angle += 180.0f *deltaTime;
@@ -153,8 +153,9 @@ public class CannonGame extends ApplicationAdapter {
 		
 		//CircleGraphic.drawSolidCircle();
 		modelMatrix.loadIdentityMatrix();
+		modelMatrix.addTranslation(500.0f, 0, 0);
+
 		modelMatrix.addRotationZ(angle);
-		//modelMatrix.addTranslation(80.0f, 0, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();		
 		//do all actual drawing and rendering here
