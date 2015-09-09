@@ -34,6 +34,8 @@ public class CannonGame extends ApplicationAdapter {
 	
 	private float xPos;
 	private float yPos;
+	private float xAngle;
+	private float yAngle;
 	private boolean pressed;
 
 	@Override
@@ -119,6 +121,8 @@ public class CannonGame extends ApplicationAdapter {
 		
 		xPos = 0.0f;
 		yPos = 0.0f;
+		xAngle = 0.0f;
+		yAngle = 90.0f;
 		pressed = false;
 	}
 	
@@ -146,16 +150,19 @@ public class CannonGame extends ApplicationAdapter {
 		{
 			pressed = true;
 			
-			//if ()
-			xPos = 0.0f;
-			yPos = 0.0f;
+			if ((xPos > 520.0f) || (xPos < -520.0f) || (yPos > 1040.0f))
+			{
+				xPos = 0.0f;
+				yPos = 0.0f;
+				xAngle = (-angle) * 2 * deltaTime;
+				yAngle = (90.0f - Math.abs(angle)) * 2 * deltaTime;
+			}
 		}
 		
-		//angle += 180.0f *deltaTime;
 		if (pressed == true)
 		{
-			xPos += (-angle) * 2 * deltaTime;
-			yPos += (90.0f - Math.abs(angle)) * 2 * deltaTime;
+			xPos += xAngle;
+			yPos += yAngle;
 		}
 		
 		
