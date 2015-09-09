@@ -128,7 +128,7 @@ public class CannonGame extends ApplicationAdapter {
 			angle += 20.0f * deltaTime;
 		}
 		
-		angle += 180.0f *deltaTime;
+		//angle += 180.0f *deltaTime;
 		
 		
 		
@@ -152,11 +152,11 @@ public class CannonGame extends ApplicationAdapter {
 		setModelMatrixScale(17.1f, 17.1f);
 		
 		//CircleGraphic.drawSolidCircle();
+		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addRotationZ(angle);
+		//modelMatrix.addTranslation(80.0f, 0, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
-		CannonGraphic.drawCannon();
-		//clearModelMatrix();
-		
+		CannonGraphic.drawCannon();		
 		//do all actual drawing and rendering here
 	}
 
