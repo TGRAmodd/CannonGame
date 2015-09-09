@@ -7,7 +7,7 @@ public class ModelMatrix extends Matrix {
 	{
 		super();
 		M2 = new float[16];
-	}
+ 	}
 
 	public void addTranslation(float Tx, float Ty, float Tz)
 	{

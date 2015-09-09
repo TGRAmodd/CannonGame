@@ -31,6 +31,10 @@ public class CannonGame extends ApplicationAdapter {
 	private ModelMatrix modelMatrix;
 	
 	private float angle = 0.0f;
+	
+	private float xPos;
+	private float yPos;
+	private boolean pressed;
 
 	@Override
 	public void create () {
@@ -94,7 +98,7 @@ public class CannonGame extends ApplicationAdapter {
 		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
 
 		//COLOR IS SET HERE
-		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0, 1);
+		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 1);
 
 
 		//VERTEX ARRAY IS FILLED HERE
@@ -112,6 +116,10 @@ public class CannonGame extends ApplicationAdapter {
 		
 		modelMatrix = new ModelMatrix();
 		modelMatrix.loadIdentityMatrix();
+		
+		xPos = 0.0f;
+		yPos = 20.0f;
+		pressed = false;
 	}
 	
 	private void update()
@@ -128,8 +136,18 @@ public class CannonGame extends ApplicationAdapter {
 			angle -= 20.0f * deltaTime;
 		}
 		
-		//angle += 180.0f *deltaTime;
+		if(Gdx.input.isKeyPressed(Input.Keys.Z))
+		{
+			pressed = true;
+			xPos = 0.0f;
+			yPos = 20.0f;
+		}
 		
+		//angle += 180.0f *deltaTime;
+		if (pressed == true)
+		{
+			yPos += 30.0f * deltaTime;
+		}
 		
 		
 		
@@ -148,17 +166,33 @@ public class CannonGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		setModelMatrixTranslation(500.0f, 50.0f);
-		setModelMatrixScale(17.1f, 17.1f);
+		//setModelMatrixTranslation(500.0f, 50.0f);
+		//setModelMatrixScale(17.1f, 17.1f);
 		
-		//CircleGraphic.drawSolidCircle();
 		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addTranslation(500.0f, 0, 0);
 
+		//Drawing the ball
+		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0.4f, 1);
+		//modelMatrix.addScale(10.0f, 10.0f, 0);
+		modelMatrix.addTranslation(xPos, yPos, 0);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		CircleGraphic.drawSolidCircle();
+		
+		modelMatrix.loadIdentityMatrix();
+		modelMatrix.addTranslation(500.0f, 0, 0);
+		//Drawing the cannon
+		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 0);
 		modelMatrix.addRotationZ(angle);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();		
-		//do all actual drawing and rendering here
+		
+		
+		
+		
+		
+		//Gdx.gl.glVertexAttribPointer(positionLoc, 2, GL20.GL_FLOAT, false, 0, vertexBuffer);
+		
 	}
 
 	@Override
