@@ -164,15 +164,10 @@ public class CannonGame extends ApplicationAdapter {
 			yPos += yAngle * 2 * deltaTime;
 		}
 		
-		
-		
 		if(Gdx.input.justTouched())
 		{
 			//do mouse/touch input stuff
 		}
-		
-		
-
 		//do all updates to the game
 	}
 	
