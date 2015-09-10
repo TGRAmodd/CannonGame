@@ -24,8 +24,8 @@ public class CircleGraphic {
 		double f = 0.0f;
 		for (int i = 0; i < verticesPerCircle; i++)
 		{
-			vertexBuffer.put(2*i, (float)Math.cos(f));
-			vertexBuffer.put(2*i + 1, (float)Math.sin(f));
+			vertexBuffer.put(2*i, 10*(float)Math.cos(f));
+			vertexBuffer.put(2*i + 1, 10*(float)Math.sin(f));
 			
 			f += 2.0 * Math.PI / (double) verticesPerCircle;
 		}
