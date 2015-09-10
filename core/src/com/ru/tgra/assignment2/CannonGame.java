@@ -148,12 +148,12 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			if ((xPos > 520.0f) || (xPos < -520.0f) || (yPos > 1040.0f) || (pressed == false))
+			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || (pressed == false))
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
 				xPos = (xAngle / 90.0f) * 20.0f;
-				yPos = (yAngle / 90.0f) * 30.0f ;
+				yPos = (yAngle / 90.0f) * 30.0f;
 			}
 			pressed = true;
 		}
@@ -164,15 +164,10 @@ public class CannonGame extends ApplicationAdapter {
 			yPos += yAngle * 2 * deltaTime;
 		}
 		
-		
-		
 		if(Gdx.input.justTouched())
 		{
 			//do mouse/touch input stuff
 		}
-		
-		
-
 		//do all updates to the game
 	}
 	
