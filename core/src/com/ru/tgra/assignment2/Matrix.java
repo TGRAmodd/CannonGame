@@ -16,16 +16,16 @@ public class Matrix {
 	
 	public void loadIdentityMatrix()
 	{
-		matrix.put(0, 1.0f);
-		matrix.put(1, 0.0f);
-		matrix.put(2, 0.0f);
-		matrix.put(3, 0.0f);
-		matrix.put(4, 0.0f);
-		matrix.put(5, 1.0f);
-		matrix.put(6, 0.0f);
-		matrix.put(7, 0.0f);
-		matrix.put(8, 0.0f);
-		matrix.put(9, 0.0f);
+		matrix.put(0,  1.0f);
+		matrix.put(1,  0.0f);
+		matrix.put(2,  0.0f);
+		matrix.put(3,  0.0f);
+		matrix.put(4,  0.0f);
+		matrix.put(5,  1.0f);
+		matrix.put(6,  0.0f);
+		matrix.put(7,  0.0f);
+		matrix.put(8,  0.0f);
+		matrix.put(9,  0.0f);
 		matrix.put(10, 1.0f);
 		matrix.put(11, 0.0f);
 		matrix.put(12, 0.0f);
@@ -53,16 +53,16 @@ public class Matrix {
 		float m14 = matrix.get(2)*M2[12] + matrix.get(6)*M2[13] + matrix.get(10)*M2[14] + matrix.get(14)*M2[15];
 		float m15 = matrix.get(3)*M2[12] + matrix.get(7)*M2[13] + matrix.get(11)*M2[14] + matrix.get(15)*M2[15];
 		
-		matrix.put(0, m0);
-		matrix.put(1, m1);
-		matrix.put(2, m2);
-		matrix.put(3, m3);
-		matrix.put(4, m4);
-		matrix.put(5, m5);
-		matrix.put(6, m6);
-		matrix.put(7, m7);
-		matrix.put(8, m8);
-		matrix.put(9, m9);
+		matrix.put(0,  m0);
+		matrix.put(1,  m1);
+		matrix.put(2,  m2);
+		matrix.put(3,  m3);
+		matrix.put(4,  m4);
+		matrix.put(5,  m5);
+		matrix.put(6,  m6);
+		matrix.put(7,  m7);
+		matrix.put(8,  m8);
+		matrix.put(9,  m9);
 		matrix.put(10, m10);
 		matrix.put(11, m11);
 		matrix.put(12, m12);
