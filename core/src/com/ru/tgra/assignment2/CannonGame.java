@@ -115,6 +115,7 @@ public class CannonGame extends ApplicationAdapter {
 		
 		CircleGraphic.create(positionLoc);
 		CannonGraphic.create(positionLoc);
+		RectangleGraphic.create(positionLoc);
 		
 		modelMatrix = new ModelMatrix();
 		modelMatrix.loadIdentityMatrix();
@@ -199,6 +200,11 @@ public class CannonGame extends ApplicationAdapter {
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();		
 		
+		modelMatrix.loadIdentityMatrix();
+		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
+		modelMatrix.addTranslation(300, 200, 0);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		RectangleGraphic.drawSolidSquare();
 		
 		
 		
