@@ -201,6 +201,7 @@ public class CannonGame extends ApplicationAdapter {
 		CannonGraphic.drawCannon();		
 		
 		modelMatrix.loadIdentityMatrix();
+		modelMatrix.addTranslation(512.0f, 0, 0);
 		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
 		modelMatrix.addTranslation(300, 200, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
