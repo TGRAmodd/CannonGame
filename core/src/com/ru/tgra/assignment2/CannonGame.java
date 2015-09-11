@@ -5,12 +5,18 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.ApplicationListener;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.utils.BufferUtils;
 
-public class CannonGame extends ApplicationAdapter {
+public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	private FloatBuffer vertexBuffer;
 
@@ -36,7 +42,15 @@ public class CannonGame extends ApplicationAdapter {
 	private float yPos;
 	private float xAngle;
 	private float yAngle;
-	private boolean pressed;
+	private float xLine1;
+	private float xLine2;
+	private float yLine1;
+	private float yLine2;
+	private boolean zPressed;
+	
+	InputProcessor inputProcessor;
+	
+	ArrayList<Line> Lines = new ArrayList<Line>();
 
 	@Override
 	public void create () {
@@ -103,15 +117,7 @@ public class CannonGame extends ApplicationAdapter {
 		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 1);
 
 
-		//VERTEX ARRAY IS FILLED HERE
-		float[] array = {-50.0f, -50.0f,
-						-50.0f, 50.0f,
-						50.0f, -50.0f,
-						50.0f, 50.0f};
-
-		vertexBuffer = BufferUtils.newFloatBuffer(8);
-		vertexBuffer.put(array);
-		vertexBuffer.rewind();
+		Gdx.input.setInputProcessor(this);
 		
 		CircleGraphic.create(positionLoc);
 		CannonGraphic.create(positionLoc);
@@ -124,7 +130,8 @@ public class CannonGame extends ApplicationAdapter {
 		yPos = 0.0f;
 		xAngle = 0.0f;
 		yAngle = 90.0f;
-		pressed = false;
+		zPressed = false;
+		
 	}
 	
 	private void update()
@@ -149,27 +156,26 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || (pressed == false))
+			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || (zPressed == false))
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
 				xPos = (xAngle / 90.0f) * 20.0f;
 				yPos = (yAngle / 90.0f) * 30.0f;
 			}
-			pressed = true;
+			zPressed = true;
+			Line line2 = new Line(100.0f, 200.0f, 200.0f, 100.0f, positionLoc);
+			Lines.add(line2);
 		}
 		
-		if (pressed == true)
+		if (zPressed == true)
 		{
-			xPos += xAngle * 2 * deltaTime;
-			yPos += yAngle * 2 * deltaTime;
+			xPos += xAngle * 3 * deltaTime;
+			yPos += yAngle * 3 * deltaTime;
 		}
 		
-		if(Gdx.input.justTouched())
-		{
-			//do mouse/touch input stuff
-		}
-		//do all updates to the game
+		//System.out.println("Lines.size: " + Lines.size());
+
 	}
 	
 	private void display()
@@ -207,6 +213,23 @@ public class CannonGame extends ApplicationAdapter {
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		RectangleGraphic.drawSolidSquare();
 		
+		modelMatrix.addTranslation(-300, 200, 0);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		RectangleGraphic.drawSolidSquare();
+		
+		modelMatrix.addTranslation(-300, 200, 0);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		RectangleGraphic.drawSolidSquare();
+
+		
+		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
+		for (int i = 0; i < Lines.size(); i++)
+		{
+			modelMatrix.loadIdentityMatrix();
+			modelMatrix.setShaderMatrix(modelMatrixLoc);
+			Lines.get(i).draw();
+		}
+		
 		
 		
 		
@@ -222,6 +245,70 @@ public class CannonGame extends ApplicationAdapter {
 		display();
 
 	}
+	
+
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button)
+	{
+		xLine1 = screenX;
+		yLine1 = screenY;
+        System.out.println("touchdown");
+
+		
+		return true;
+	}
+	
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button)
+	{
+		xLine2 = screenX;
+		yLine2 = screenY;
+        System.out.println("toucup");
+
+		
+		Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
+		Lines.add(line);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean keyUp(int x)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean keyDown(int x)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean touchDragged(int x, int y, int z)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean mouseMoved(int x, int y)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean keyTyped(char x)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean scrolled(int x)
+	{
+		return false;
+	}
+
 
 
 	private void clearModelMatrix()
