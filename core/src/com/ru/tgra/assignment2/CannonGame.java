@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.utils.BufferUtils;
 
@@ -37,6 +38,14 @@ public class CannonGame extends ApplicationAdapter {
 	private float xAngle;
 	private float yAngle;
 	private boolean pressed;
+	
+	private float move_x;
+	private float move_y;
+	
+	ArrayList<Float> rect_x = new ArrayList<Float>();
+	ArrayList<Float> rect_y = new ArrayList<Float>();
+	
+	ArrayList<RectangleGraphic> rectangles = new ArrayList<RectangleGraphic>();
 
 	@Override
 	public void create () {
@@ -125,6 +134,9 @@ public class CannonGame extends ApplicationAdapter {
 		xAngle = 0.0f;
 		yAngle = 90.0f;
 		pressed = false;
+		
+		move_x = 0.0f;
+		move_y = 0.0f;
 	}
 	
 	private void update()
@@ -149,26 +161,50 @@ public class CannonGame extends ApplicationAdapter {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || (pressed == false))
+			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || yPos < 0 || (pressed == false))
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
 				xPos = (xAngle / 90.0f) * 20.0f;
 				yPos = (yAngle / 90.0f) * 30.0f;
+				move_x = xAngle * 2 * deltaTime;
+				move_y = yAngle * 2 * deltaTime;
 			}
 			pressed = true;
 		}
 		
 		if (pressed == true)
 		{
-			xPos += xAngle * 2 * deltaTime;
-			yPos += yAngle * 2 * deltaTime;
+			for(int i = 0; i < rect_x.size(); i++)
+			{
+				float left 	 = rect_x.get(i) - 50;
+				float right  = rect_x.get(i) + 50;
+				float bottom = rect_y.get(i) - 50;
+				float top 	 = rect_y.get(i) + 50;
+				if (yPos >= bottom && yPos <= top && xPos >= left && xPos <= right)
+				{
+					if(yPos - move_y < bottom )
+					{
+						move_y *= -1;
+					}
+					else if(Math.abs(xPos - move_x) < Math.abs(left))
+					{
+						move_x *= -1;
+					}
+					else if(Math.abs(xPos + move_x) > Math.abs(right))
+					{
+						move_x *= -1;
+					}
+					else if(yPos + move_y > top)
+					{
+						move_y *= -1;
+					}
+				}
+			}
+			xPos += move_x;
+			yPos += move_y;
 		}
 		
-		if(Gdx.input.justTouched())
-		{
-			//do mouse/touch input stuff
-		}
 		//do all updates to the game
 	}
 	
@@ -204,25 +240,29 @@ public class CannonGame extends ApplicationAdapter {
 		modelMatrix.addTranslation(512.0f, 0, 0);
 		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
 		modelMatrix.addTranslation(300, 200, 0);
+		rect_x.add(300.0f);
+		rect_y.add(200.0f);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		RectangleGraphic.drawSolidSquare();
 		
+		modelMatrix.loadIdentityMatrix();
+		modelMatrix.addTranslation(512.0f, 0, 0);
+		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
+		modelMatrix.addTranslation(-300, 200, 0);
+		rect_x.add(-300.0f);
+		rect_y.add(200.0f);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		RectangleGraphic.drawSolidSquare();
 		
-		
-		
-		//Gdx.gl.glVertexAttribPointer(positionLoc, 2, GL20.GL_FLOAT, false, 0, vertexBuffer);
-		
+		//Gdx.gl.glVertexAttribPointer(positionLoc, 2, GL20.GL_FLOAT, false, 0, vertexBuffer);	
 	}
 
 	@Override
 	public void render () {
-		
 		//put the code inside the update and display methods, depending on the nature of the code
 		update();
 		display();
-
 	}
-
 
 	private void clearModelMatrix()
 	{
