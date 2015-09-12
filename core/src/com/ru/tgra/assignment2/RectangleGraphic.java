@@ -9,6 +9,20 @@ public class RectangleGraphic {
 	private static FloatBuffer vertexBuffer;
 	private static int vertexPointer;
 	
+	public RectangleGraphic()
+	{
+		//RectangleGraphic.vertexPointer = vertexPointer;
+		
+		//VERTEX ARRAY IS FILLED HERE
+		float[] array = {-50.0f, 50.0f,
+		-50.0f, -50.0f,
+		50.0f, -50.0f,
+		50.0f, 50.0f};
+		vertexBuffer = BufferUtils.newFloatBuffer(8);
+		vertexBuffer.put(array);
+		vertexBuffer.rewind();
+	}
+	
 	public static void create(int vertexPointer) {
 		RectangleGraphic.vertexPointer = vertexPointer;
 		
