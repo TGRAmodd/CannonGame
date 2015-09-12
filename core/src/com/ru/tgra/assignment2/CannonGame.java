@@ -43,7 +43,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	private float xAngle;
 	private float yAngle;
 
-	private boolean pressed;
+	//private boolean pressed;
+	private boolean touching;
 	
 	private float move_x;
 	private float move_y;
@@ -56,6 +57,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	private float yLine1;
 	private float yLine2;
 	private boolean zPressed;
+	
+	private float mousePosX;
+	private float mousePosY;
 	
 	InputProcessor inputProcessor;
 	
@@ -139,11 +143,15 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		yPos = 0.0f;
 		xAngle = 0.0f;
 		yAngle = 90.0f;
-		pressed = false;
+		//pressed = false;
 		
 		move_x = 0.0f;
 		move_y = 0.0f;
-		zPressed = false;		
+		zPressed = false;
+		touching = false;
+		mousePosX = 0.0f;
+		mousePosY = 0.0f;
+		
 	}
 	
 	private void update()
@@ -154,7 +162,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		{
 			if(angle < 70)
 			{
-				angle += 30.0f * deltaTime;
+				angle += 60.0f * deltaTime;
 			}
 		}
 		
@@ -162,7 +170,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		{
 			if(angle > -70)
 			{
-				angle -= 30.0f * deltaTime;
+				angle -= 60.0f * deltaTime;
 			}
 		}
 		
@@ -174,12 +182,10 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				yAngle = (90.0f - Math.abs(angle));
 				xPos = (xAngle / 90.0f) * 20.0f;
 				yPos = (yAngle / 90.0f) * 30.0f;
-				move_x = xAngle * 2 * deltaTime;
-				move_y = yAngle * 2 * deltaTime;
+				move_x = xAngle * 5 * deltaTime;
+				move_y = yAngle * 5 * deltaTime;
 			}
 			zPressed = true;
-			Line line2 = new Line(100.0f, 200.0f, 200.0f, 100.0f, positionLoc);
-			Lines.add(line2);
 		}
 		
 		if (zPressed == true)
@@ -213,6 +219,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			xPos += move_x;
 			yPos += move_y;
 		}
+		
+		
 	}
 	
 	private void display()
@@ -277,6 +285,24 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//put the code inside the update and display methods, depending on the nature of the code
 		update();
 		display();
+		
+		displayTempLine();
+	}
+	
+	public void displayTempLine()
+	{
+		if (touching)
+		{
+			Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
+			Line tempLine = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, mousePosX, Gdx.graphics.getHeight()-mousePosY, positionLoc);
+			modelMatrix.loadIdentityMatrix();
+			modelMatrix.setShaderMatrix(modelMatrixLoc);
+			//Lines.add(tempLine);
+			
+			//System.out.println("mousePosX: " + mousePosX + ", mousePosY: " + mousePosY);
+			
+			tempLine.draw();
+		}
 	}
 	
 
@@ -286,7 +312,10 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	{
 		xLine1 = screenX;
 		yLine1 = screenY;
-        System.out.println("touchdown");
+		mousePosX = screenX;
+		mousePosY = screenY;
+        //System.out.println("touchDown");
+        touching = true;
 
 		
 		return true;
@@ -297,7 +326,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	{
 		xLine2 = screenX;
 		yLine2 = screenY;
-        System.out.println("toucup");
+        //System.out.println("touchUp");
+        touching = false;
 
 		
 		Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
@@ -321,13 +351,16 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDragged(int x, int y, int z)
 	{
-		return false;
+		//System.out.println("x: " + x + ", y: " + y);
+		mousePosX = x;
+		mousePosY = y;
+		return true;
 	}
 	
 	@Override
 	public boolean mouseMoved(int x, int y)
 	{
-		return false;
+		return true;
 	}
 	
 	@Override
