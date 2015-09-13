@@ -10,6 +10,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.math.Vector2;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	private float angle = 0.0f;
 	
-	private float xPos;
-	private float yPos;
+	private float ballPosX;
+	private float ballPosY;
 	private float xAngle;
 	private float yAngle;
 
@@ -148,8 +149,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		modelMatrix = new ModelMatrix();
 		modelMatrix.loadIdentityMatrix();
 		
-		xPos = 0.0f;
-		yPos = 0.0f;
+		ballPosX = 0.0f;
+		ballPosY = 0.0f;
 		xAngle = 0.0f;
 		yAngle = 90.0f;
 		//pressed = false;
@@ -189,14 +190,16 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			if ((xPos > (Gdx.graphics.getWidth())/2) || (xPos < -(Gdx.graphics.getWidth())/2) || (yPos > Gdx.graphics.getHeight()) || yPos < 0 || (zPressed == false))
+			if ((ballPosX > (Gdx.graphics.getWidth())/2) || (ballPosX < -(Gdx.graphics.getWidth())/2) || (ballPosY > Gdx.graphics.getHeight()) || ballPosY < 0 || (zPressed == false))
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
-				xPos = (xAngle / 90.0f) * 20.0f;
-				yPos = (yAngle / 90.0f) * 30.0f;
-				move_x = xAngle * 4 * deltaTime;
-				move_y = yAngle * 4 * deltaTime;
+
+				ballPosX = (xAngle / 90.0f) * 20.0f;
+				ballPosY = (yAngle / 90.0f) * 30.0f;
+				move_x = xAngle * 5 * deltaTime;
+				move_y = yAngle * 5 * deltaTime;
+
 			}
 			zPressed = true;
 		}
@@ -209,21 +212,21 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				float right  = rectangles.get(i).getX2();
 				float bottom = rectangles.get(i).getY1();
 				float top 	 = rectangles.get(i).getY2();
-				if (yPos >= bottom && yPos <= top && xPos >= left && xPos <= right)
+				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
-					if(yPos - move_y < bottom )
+					if(ballPosY - move_y < bottom )
 					{
 						move_y *= -1;
 					}
-					else if(Math.abs(xPos - move_x) < Math.abs(left))
+					else if(Math.abs(ballPosX - move_x) < Math.abs(left))
 					{
 						move_x *= -1;
 					}
-					else if(Math.abs(xPos + move_x) > Math.abs(right))
+					else if(Math.abs(ballPosX + move_x) > Math.abs(right))
 					{
 						move_x *= -1;
 					}
-					else if(yPos + move_y > top)
+					else if(ballPosY + move_y > top)
 					{
 						move_y *= -1;
 					}
@@ -231,8 +234,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			}
 			if (!goalReached())
 			{
-				xPos += move_x;
-				yPos += move_y;
+				ballPosX += move_x;
+				ballPosY += move_y;
+				//System.out.println("ballPosX: " + ballPosX + ", ballPosY: " + ballPosY);
 			}
 		}
 	}
@@ -251,7 +255,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//Drawing the ball
 		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0.4f, 1);
 		//modelMatrix.addScale(10.0f, 10.0f, 0);
-		modelMatrix.addTranslation(xPos, yPos, 0);
+		modelMatrix.addTranslation(ballPosX, ballPosY, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		//modelMatrix.addScale(100.0f, 100.0f, 0);
 		CircleGraphic.drawSolidCircle();
@@ -296,12 +300,13 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			rectangles.get(i).drawSolidSquare();
 		}
 		
-		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
+		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.6f, 0.9f, 1);
 		for (int i = 0; i < Lines.size(); i++)
 		{
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			Lines.get(i).draw();
+			collition(Lines.get(i));
 		}
 		
 		modelMatrix.loadIdentityMatrix();
@@ -357,11 +362,57 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			tempRect.drawSolidSquare();
 		}
 	}
+
+	public boolean collition(Line line)
+	{
+		Coordinates startingPoint = line.getStartingPoint();
+		Coordinates endPoint = line.getEndPoint();
+		
+		//System.out.println("startingPoint.x: " + startingPoint.getX() + "startingPoint.y:" + startingPoint.getY());
+		
+		
+		Vector2 segVector = new Vector2(endPoint.getX() - startingPoint.getX(), endPoint.getY() - startingPoint.getY());
+		Vector2 circPosVector = new Vector2((ballPosX + 512.0f) - startingPoint.getX(), ballPosY - startingPoint.getY());
+		
+		Vector2 unSegVector = new Vector2(segVector.x / segVector.len(), segVector.y / segVector.len());
+		float projVecLength = circPosVector.dot(unSegVector);
+		Coordinates closestPointOnLine;
+		
+		if (projVecLength < 0)
+		{
+			closestPointOnLine = startingPoint;
+		}
+		else if (projVecLength > segVector.len())
+		{
+			closestPointOnLine = endPoint;
+		}
+		else
+		{
+			Vector2 projVector = new Vector2(projVecLength * unSegVector.x, projVecLength * unSegVector.y);
+			closestPointOnLine = new Coordinates(projVector.x + startingPoint.getX(), projVector.y + startingPoint.getY());
+		}
+		
+		Vector2 distVector = new Vector2((ballPosX + 512.0f) - closestPointOnLine.getX(), ballPosY - closestPointOnLine.getY());
+		
+		//System.out.println("closestPointOnLine.x: " + closestPointOnLine.getX() + "closestPointOnLine.y:" + closestPointOnLine.getY());
+		
+		//System.out.println(distVector.len());
+		if(distVector.len() < 5.0f)
+		{
+			System.out.println("Collision happened!");
+			return true;
+		}
+		else
+		{
+			//System.out.println("No collition!");
+			return false;
+		}
+	}
 	
 	public boolean goalReached()
 	{
-		float distanceX = goalPosX - xPos;
-		float distanceY = goalPosY - yPos;
+		float distanceX = goalPosX - ballPosX;
+		float distanceY = goalPosY - ballPosY;
 		float sqDistance = (distanceX * distanceX) + (distanceY * distanceY);
 		
 		if (sqDistance <= 3600)	//The goal's radius is 50 + the radius of the ball
@@ -447,7 +498,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean mouseMoved(int x, int y)
 	{
-		//System.out.println(x + "   " + y);
+		//System.out.println("x: " + x + ", y: " + (Gdx.graphics.getHeight() - y));
 		return true;
 	}
 	
