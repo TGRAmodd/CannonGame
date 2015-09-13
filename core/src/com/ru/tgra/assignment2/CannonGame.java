@@ -60,6 +60,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	private float mousePosX;
 	private float mousePosY;
+	private float goalPosX;
+	private float goalPosY;
 	
 	InputProcessor inputProcessor;
 	
@@ -135,6 +137,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		CircleGraphic.create(positionLoc);
 		CannonGraphic.create(positionLoc);
 		RectangleGraphic.create(positionLoc);
+		GoalGraphic.create(positionLoc);
 		
 		modelMatrix = new ModelMatrix();
 		modelMatrix.loadIdentityMatrix();
@@ -151,6 +154,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		touching = false;
 		mousePosX = 0.0f;
 		mousePosY = 0.0f;
+		goalPosX = 0.0f;
+		goalPosY = 0.0f;
 		
 	}
 	
@@ -182,8 +187,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				yAngle = (90.0f - Math.abs(angle));
 				xPos = (xAngle / 90.0f) * 20.0f;
 				yPos = (yAngle / 90.0f) * 30.0f;
-				move_x = xAngle * 5 * deltaTime;
-				move_y = yAngle * 5 * deltaTime;
+				move_x = xAngle * 2 * deltaTime;
+				move_y = yAngle * 2 * deltaTime;
 			}
 			zPressed = true;
 		}
@@ -216,10 +221,14 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 					}
 				}
 			}
-			xPos += move_x;
-			yPos += move_y;
+			if (!goalReached())
+			{
+				xPos += move_x;
+				yPos += move_y;
+			}
 		}
-		
+		//System.out.println("xPos: " + xPos + ", yPos: " + yPos + ", goalPosX: " + goalPosX + ", goalPosY: "+ goalPosY);
+		//goalReached();
 		
 	}
 	
@@ -239,6 +248,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//modelMatrix.addScale(10.0f, 10.0f, 0);
 		modelMatrix.addTranslation(xPos, yPos, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		//modelMatrix.addScale(100.0f, 100.0f, 0);
 		CircleGraphic.drawSolidCircle();
 		
 		modelMatrix.loadIdentityMatrix();
@@ -277,6 +287,15 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			Lines.get(i).draw();
 		}
 		
+		modelMatrix.loadIdentityMatrix();
+		modelMatrix.addTranslation(512.0f, 0, 0);
+		modelMatrix.addTranslation(0, 500.0f, 0);
+		goalPosX = 0.0f;
+		goalPosY = 500.0f;
+		Gdx.gl.glUniform4f(colorLoc, 0.3f, 0.8f, 0.3f, 1);
+		modelMatrix.setShaderMatrix(modelMatrixLoc);
+		GoalGraphic.drawGoal();
+		
 		//Gdx.gl.glVertexAttribPointer(positionLoc, 2, GL20.GL_FLOAT, false, 0, vertexBuffer);	
 	}
 
@@ -305,6 +324,21 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 	
+	public boolean goalReached()
+	{
+		float distanceX = goalPosX - xPos;
+		float distanceY = goalPosY - yPos;
+		float sqDistance = (distanceX * distanceX) + (distanceY * distanceY);
+		
+		if (sqDistance <= 3600)	//The goal's radius is 50 + the radius of the ball
+		{						// 50+10 = 60, 60*60 = 3600
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 
 	@Override
@@ -360,6 +394,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean mouseMoved(int x, int y)
 	{
+		//System.out.println(x + "   " + y);
 		return true;
 	}
 	
