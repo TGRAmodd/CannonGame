@@ -44,7 +44,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	private float yAngle;
 
 	//private boolean pressed;
-	private boolean touching;
+	private boolean drawingLine;
+	private boolean drawingRect;
 	
 	private float move_x;
 	private float move_y;
@@ -57,6 +58,11 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	private float yLine1;
 	private float yLine2;
 	private boolean zPressed;
+	
+	private float xRect1;
+	private float xRect2;
+	private float yRect1;
+	private float yRect2;
 	
 	private float mousePosX;
 	private float mousePosY;
@@ -151,11 +157,13 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		move_x = 0.0f;
 		move_y = 0.0f;
 		zPressed = false;
-		touching = false;
+		drawingLine = false;
 		mousePosX = 0.0f;
 		mousePosY = 0.0f;
 		goalPosX = 0.0f;
 		goalPosY = 0.0f;
+		
+		drawingRect = false;
 		
 	}
 	
@@ -267,7 +275,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		 * */
 		if(rectangles.isEmpty())
 		{
-			RectangleGraphic rect = new RectangleGraphic(250.0f, 150.0f, 350.0f, 250.0f, positionLoc);
+			RectangleGraphic rect = new RectangleGraphic(250.0f, 150.0f, 350.0f, 550.0f, positionLoc);
 			rectangles.add(rect);
 		}
 		if(rectangles.size() == 1)
@@ -287,7 +295,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			rectangles.get(i).drawSolidSquare();
 		}
-		
 		
 		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
 		for (int i = 0; i < Lines.size(); i++)
@@ -314,19 +321,40 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//put the code inside the update and display methods, depending on the nature of the code
 		update();
 		display();
-		
 		displayTempLine();
+		displayTempRect();
 	}
 	
 	public void displayTempLine()
 	{
-		if (touching)
+		if (drawingLine)
 		{
 			Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
 			Line tempLine = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, mousePosX, Gdx.graphics.getHeight()-mousePosY, positionLoc);
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			tempLine.draw();
+		}
+	}
+	
+	public void displayTempRect()
+	{
+		if(drawingRect)
+		{
+			Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
+			RectangleGraphic tempRect = new RectangleGraphic(
+					xRect1, 
+					yRect1, 
+					mousePosX - (Gdx.graphics.getWidth() / 2.0f), 
+					Gdx.graphics.getHeight() - mousePosY, 
+					positionLoc);
+			modelMatrix.loadIdentityMatrix();
+			modelMatrix.addTranslation(512.0f, 0, 0);
+			float x = (tempRect.getX2() + tempRect.getX1()) / 2.0f;
+			float y = (tempRect.getY2() + tempRect.getY1()) / 2.0f;
+			modelMatrix.addTranslation(x, y, 0);
+			modelMatrix.setShaderMatrix(modelMatrixLoc);
+			tempRect.drawSolidSquare();
 		}
 	}
 	
@@ -350,29 +378,57 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
-		xLine1 = screenX;
-		yLine1 = screenY;
-		mousePosX = screenX;
-		mousePosY = screenY;
-        //System.out.println("touchDown");
-        touching = true;
-
-		
+		if(button == 0)
+		{
+			xLine1 = screenX;
+			yLine1 = screenY;
+			mousePosX = screenX;
+			mousePosY = screenY;
+	        //System.out.println("touchDown");
+	        drawingLine = true;
+		}
+		else if(button == 1)
+		{
+			xRect1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
+			yRect1 = Gdx.graphics.getHeight() - screenY;
+			mousePosX = screenX;
+			mousePosY = screenY;
+			drawingRect = true;
+		}
 		return true;
 	}
 	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		xLine2 = screenX;
-		yLine2 = screenY;
-        //System.out.println("touchUp");
-        touching = false;
-
-		
-		Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
-		Lines.add(line);
-		
+		if(button == 0)
+		{
+			xLine2 = screenX;
+			yLine2 = screenY;
+	        //System.out.println("touchUp");
+	        drawingLine = false;
+			
+			Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
+			Lines.add(line);
+		}
+		else if(button == 1)
+		{
+			xRect2 = screenX - (Gdx.graphics.getWidth() / 2.0f);
+			yRect2 = Gdx.graphics.getHeight() - screenY;
+			drawingRect = false;
+			
+			RectangleGraphic rect = new RectangleGraphic(xRect1, yRect1, xRect2, yRect2, positionLoc);
+			rectangles.add(rect);
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean touchDragged(int x, int y, int z)
+	{
+		//System.out.println("x: " + x + ", y: " + y);
+		mousePosX = x;
+		mousePosY = y;
 		return true;
 	}
 	
@@ -386,15 +442,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	public boolean keyDown(int x)
 	{
 		return false;
-	}
-	
-	@Override
-	public boolean touchDragged(int x, int y, int z)
-	{
-		//System.out.println("x: " + x + ", y: " + y);
-		mousePosX = x;
-		mousePosY = y;
-		return true;
 	}
 	
 	@Override
