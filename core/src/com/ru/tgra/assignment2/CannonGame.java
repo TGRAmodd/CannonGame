@@ -208,10 +208,10 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		{
 			for(int i = 0; i < rectangles.size(); i++)
 			{
-				float left 	 = rectangles.get(i).getX1();
-				float right  = rectangles.get(i).getX2();
-				float bottom = rectangles.get(i).getY1();
-				float top 	 = rectangles.get(i).getY2();
+				float left 	 = Math.min(rectangles.get(i).getX1(), rectangles.get(i).getX2());
+				float right  = Math.max(rectangles.get(i).getX1(), rectangles.get(i).getX2());
+				float bottom = Math.min(rectangles.get(i).getY1(), rectangles.get(i).getY2());
+				float top 	 = Math.max(rectangles.get(i).getY1(), rectangles.get(i).getY2());
 				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
 					if(ballPosY - move_y < bottom )
