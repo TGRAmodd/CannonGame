@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 
 public class RectangleGraphic {
-	//private static FloatBuffer vertexBuffer;
-	//private static int vertexPointer;
 	private FloatBuffer vertexBuffer;
 	private int vertexPointer;
 	
@@ -33,21 +31,6 @@ public class RectangleGraphic {
 		vertexBuffer.put(array);
 		vertexBuffer.rewind();
 	}
-	
-	/*
-	public static void create(int vertexPointer) {
-		RectangleGraphic.vertexPointer = vertexPointer;
-		
-		//VERTEX ARRAY IS FILLED HERE
-		float[] array = {-50.0f, 50.0f,
-		-50.0f, -50.0f,
-		50.0f, -50.0f,
-		50.0f, 50.0f};
-		vertexBuffer = BufferUtils.newFloatBuffer(8);
-		vertexBuffer.put(array);
-		vertexBuffer.rewind();
-	}
-	*/
 
 	public void drawSolidSquare() {
 		Gdx.gl.glVertexAttribPointer(this.vertexPointer, 2, GL20.GL_FLOAT,
