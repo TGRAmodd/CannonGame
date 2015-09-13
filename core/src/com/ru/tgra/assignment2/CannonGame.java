@@ -405,7 +405,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//System.out.println("closestPointOnLine.x: " + closestPointOnLine.getX() + "closestPointOnLine.y:" + closestPointOnLine.getY());
 		
 		//System.out.println(distVector.len());
-		if(distVector.len() < 5.0f)
+		if(distVector.len() < 7.0f)
 		{
 			System.out.println("Collision happened!");
 			return true;
