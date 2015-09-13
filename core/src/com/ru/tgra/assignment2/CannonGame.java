@@ -72,7 +72,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	InputProcessor inputProcessor;
 	
-	ArrayList<Line> Lines = new ArrayList<Line>();
+	ArrayList<Line> initialLines = new ArrayList<Line>();
+	ArrayList<Line> lines = new ArrayList<Line>();
 	ArrayList<RectangleGraphic> rectangles = new ArrayList<RectangleGraphic>();
 
 	@Override
@@ -190,7 +191,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.Z))
 		{
-			if ((ballPosX > (Gdx.graphics.getWidth())/2) || (ballPosX < -(Gdx.graphics.getWidth())/2) || (ballPosY > Gdx.graphics.getHeight()) || ballPosY < 0 || (zPressed == false))
+			if (ballOutOfBounce() || (ballPosX == 0.0f && ballPosY == 0.0f))
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
@@ -199,7 +200,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				ballPosY = (yAngle / 90.0f) * 30.0f;
 				move_x = xAngle * 5 * deltaTime;
 				move_y = yAngle * 5 * deltaTime;
-
 			}
 			zPressed = true;
 		}
@@ -241,12 +241,21 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			}
 		}
 		
-		for (int i = 0; i < Lines.size(); i++)
+		for (int i = 0; i < lines.size(); i++)
 		{
-			if (collision(Lines.get(i)))
+			if (collision(lines.get(i)))
 			{
-				changeBallDirection(Lines.get(i));
+				changeBallDirection(lines.get(i));
 			}
+		}
+		
+		if (ballOutOfBounce() || goalReached())
+		{
+			ballPosX = 0.0f;
+			ballPosY = 0.0f;
+			move_x = 0.0f;
+			move_y = 0.0f;
+			clearObstacles();
 		}
 	}
 	
@@ -309,12 +318,13 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			rectangles.get(i).drawSolidSquare();
 		}
 		
+		
 		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.6f, 0.9f, 1);
-		for (int i = 0; i < Lines.size(); i++)
+		for (int i = 0; i < lines.size(); i++)
 		{
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
-			Lines.get(i).draw();
+			lines.get(i).draw();
 		}
 		
 		modelMatrix.loadIdentityMatrix();
@@ -408,7 +418,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		//System.out.println(distVector.len());
 		if(distVector.len() < 7.0f)
 		{
-			System.out.println("Collision happened!");
+			//System.out.println("Collision happened!");
 			return true;
 		}
 		else
@@ -449,7 +459,25 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			return false;
 		}
 	}
-
+	
+	public void clearObstacles()
+	{
+		lines.clear();
+		rectangles.clear();
+	}
+	
+	public boolean ballOutOfBounce()
+	{
+		if ((ballPosX > (Gdx.graphics.getWidth())/2) || (ballPosX < -(Gdx.graphics.getWidth())/2) 
+				|| (ballPosY > Gdx.graphics.getHeight()) || ballPosY < 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -485,7 +513,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	        drawingLine = false;
 			
 			Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
-			Lines.add(line);
+			lines.add(line);
 		}
 		else if(button == 0)
 		{
