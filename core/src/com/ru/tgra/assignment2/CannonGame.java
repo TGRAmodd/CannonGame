@@ -272,7 +272,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 		if(rectangles.size() == 1)
 		{
-			RectangleGraphic rect2 = new RectangleGraphic(-400.0f, 400.0f, -200.0f, 600.0f, positionLoc);
+			RectangleGraphic rect2 = new RectangleGraphic(-500.0f, 400.0f, -200.0f, 600.0f, positionLoc);
 			rectangles.add(rect2);
 		}
 		

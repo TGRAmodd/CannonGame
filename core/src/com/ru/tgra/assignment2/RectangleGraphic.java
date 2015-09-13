@@ -21,13 +21,14 @@ public class RectangleGraphic {
 		this.y2 = y2;
 		this.vertexPointer = ptr;
 		
-		float halfSide = Math.abs(y2-y1) / 2.0f;
+		float height = Math.abs(y2-y1) / 2.0f;
+		float width = Math.abs(x2-x1) / 2.0f;
 		
 		//VERTEX ARRAY IS FILLED HERE
-		float[] array = {-halfSide, halfSide,
-						 -halfSide, -halfSide,
-						 halfSide, -halfSide,
-						 halfSide, halfSide};
+		float[] array = {-width, height,
+						 -width, -height,
+						 width, -height,
+						 width, height};
 		vertexBuffer = BufferUtils.newFloatBuffer(8);
 		vertexBuffer.put(array);
 		vertexBuffer.rewind();
