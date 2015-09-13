@@ -5,11 +5,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.math.Vector2;
 
 import java.nio.FloatBuffer;
@@ -37,14 +33,12 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	private ModelMatrix modelMatrix;
 	
-	private float angle = 0.0f;
-	
+	private float angle;
 	private float ballPosX;
 	private float ballPosY;
 	private float xAngle;
 	private float yAngle;
 
-	//private boolean pressed;
 	private boolean drawingLine;
 	private boolean drawingRect;
 	
@@ -72,7 +66,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	InputProcessor inputProcessor;
 	
-	ArrayList<Line> initialLines = new ArrayList<Line>();
 	ArrayList<Line> lines = new ArrayList<Line>();
 	ArrayList<RectangleGraphic> rectangles = new ArrayList<RectangleGraphic>();
 
@@ -154,7 +147,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		ballPosY = 0.0f;
 		xAngle = 0.0f;
 		yAngle = 90.0f;
-		//pressed = false;
+		angle = 0.0f;
 		
 		move_x = 0.0f;
 		move_y = 0.0f;
@@ -233,12 +226,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 					}
 				}
 			}
-			if (!goalReached())
-			{
-				ballPosX += move_x;
-				ballPosY += move_y;
-				//System.out.println("ballPosX: " + ballPosX + ", ballPosY: " + ballPosY);
-			}
+			ballPosX += move_x;
+			ballPosY += move_y;
 		}
 		
 		for (int i = 0; i < lines.size(); i++)
@@ -259,30 +248,29 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 	
+	private void updateCannon()
+	{
+		
+	}
+	
 	private void display()
 	{
 		Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		//setModelMatrixTranslation(500.0f, 50.0f);
-		//setModelMatrixScale(17.1f, 17.1f);
-		
 		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addTranslation(512.0f, 0, 0);
 
 		//Drawing the ball
 		Gdx.gl.glUniform4f(colorLoc, 0.7f, 0.2f, 0.4f, 1);
-		//modelMatrix.addScale(10.0f, 10.0f, 0);
 		modelMatrix.addTranslation(ballPosX, ballPosY, 0);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
-		//modelMatrix.addScale(100.0f, 100.0f, 0);
 		CircleGraphic.drawSolidCircle();
 		
 		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addTranslation(512.0f, 0, 0);
 		
 		//Drawing the cannon
-		//modelMatrix.addScale(10.0f, 10.0f, 0);
 		Gdx.gl.glUniform4f(colorLoc, 0, 0, 0, 0);
 		modelMatrix.addRotationZ(angle);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
@@ -295,15 +283,20 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		 * it on screen.
 		 * Best regards, Jerry
 		 * */
-		if(rectangles.isEmpty())
+		if (rectangles.isEmpty())
 		{
 			RectangleGraphic rect = new RectangleGraphic(250.0f, 150.0f, 350.0f, 550.0f, positionLoc);
 			rectangles.add(rect);
 		}
-		if(rectangles.size() == 1)
+		if (rectangles.size() == 1)
 		{
 			RectangleGraphic rect2 = new RectangleGraphic(-500.0f, 400.0f, -200.0f, 600.0f, positionLoc);
 			rectangles.add(rect2);
+		}
+		if (lines.isEmpty())
+		{
+			Line line = new Line(-200.0f, 200.0f, 200.0f, 200.0f, positionLoc);
+			lines.add(line);
 		}
 		
 		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);	
@@ -323,6 +316,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		for (int i = 0; i < lines.size(); i++)
 		{
 			modelMatrix.loadIdentityMatrix();
+			modelMatrix.addTranslation(512.0f, 0, 0);
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			lines.get(i).draw();
 		}
@@ -353,8 +347,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		if (drawingLine)
 		{
 			Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.8f, 0.6f, 1);
-			Line tempLine = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, mousePosX, Gdx.graphics.getHeight()-mousePosY, positionLoc);
+			Line tempLine = new Line(xLine1, yLine1, mousePosX, mousePosY, positionLoc);
 			modelMatrix.loadIdentityMatrix();
+			modelMatrix.addTranslation(512.0f, 0, 0);
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			tempLine.draw();
 		}
@@ -369,8 +364,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			RectangleGraphic tempRect = new RectangleGraphic(
 					xRect1, 
 					yRect1, 
-					mousePosX - (Gdx.graphics.getWidth() / 2.0f), 
-					Gdx.graphics.getHeight() - mousePosY, 
+					mousePosX, 
+					mousePosY, 
 					positionLoc);
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.addTranslation(512.0f, 0, 0);
@@ -387,11 +382,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		Coordinates startingPoint = line.getStartingPoint();
 		Coordinates endPoint = line.getEndPoint();
 		
-		//System.out.println("startingPoint.x: " + startingPoint.getX() + "startingPoint.y:" + startingPoint.getY());
-		
-		
 		Vector2 segVector = new Vector2(endPoint.getX() - startingPoint.getX(), endPoint.getY() - startingPoint.getY());
-		Vector2 circPosVector = new Vector2((ballPosX + 512.0f) - startingPoint.getX(), ballPosY - startingPoint.getY());
+		Vector2 circPosVector = new Vector2((ballPosX) - startingPoint.getX(), ballPosY - startingPoint.getY());
 		
 		Vector2 unSegVector = new Vector2(segVector.x / segVector.len(), segVector.y / segVector.len());
 		float projVecLength = circPosVector.dot(unSegVector);
@@ -411,19 +403,14 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			closestPointOnLine = new Coordinates(projVector.x + startingPoint.getX(), projVector.y + startingPoint.getY());
 		}
 		
-		Vector2 distVector = new Vector2((ballPosX + 512.0f) - closestPointOnLine.getX(), ballPosY - closestPointOnLine.getY());
+		Vector2 distVector = new Vector2((ballPosX) - closestPointOnLine.getX(), ballPosY - closestPointOnLine.getY());
 		
-		//System.out.println("closestPointOnLine.x: " + closestPointOnLine.getX() + "closestPointOnLine.y:" + closestPointOnLine.getY());
-		
-		//System.out.println(distVector.len());
-		if(distVector.len() < 7.0f)
+		if (distVector.len() < 10.0f)
 		{
-			//System.out.println("Collision happened!");
 			return true;
 		}
 		else
 		{
-			//System.out.println("No collision!");
 			return false;
 		}
 	}
@@ -450,7 +437,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		float distanceY = goalPosY - ballPosY;
 		float sqDistance = (distanceX * distanceX) + (distanceY * distanceY);
 		
-		if (sqDistance <= 3600)	//The goal's radius is 50 + the radius of the ball
+		if (sqDistance <= 3600)	//The goal's radius is 50. The radius of the ball is 10
 		{						// 50+10 = 60, 60*60 = 3600
 			return true;
 		}
@@ -484,21 +471,19 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	{
 		if(button == 1)
 		{
-			xLine1 = screenX;
-			yLine1 = screenY;
-			mousePosX = screenX;
-			mousePosY = screenY;
-	        //System.out.println("touchDown");
+			xLine1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
+			yLine1 = Gdx.graphics.getHeight() - screenY;
 	        drawingLine = true;
 		}
 		else if(button == 0)
 		{
 			xRect1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
 			yRect1 = Gdx.graphics.getHeight() - screenY;
-			mousePosX = screenX;
-			mousePosY = screenY;
 			drawingRect = true;
 		}
+		
+		mousePosX = screenX - (Gdx.graphics.getWidth() / 2.0f);
+		mousePosY = Gdx.graphics.getHeight() - screenY;
 		return true;
 	}
 	
@@ -507,12 +492,11 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	{
 		if(button == 1)
 		{
-			xLine2 = screenX;
-			yLine2 = screenY;
-	        //System.out.println("touchUp");
+			xLine2 = screenX - (Gdx.graphics.getWidth() / 2.0f);
+			yLine2 = Gdx.graphics.getHeight() - screenY;
 	        drawingLine = false;
 			
-			Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
+			Line line = new Line(xLine1, yLine1, xLine2, yLine2, positionLoc);
 			lines.add(line);
 		}
 		else if(button == 0)
@@ -530,9 +514,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDragged(int x, int y, int z)
 	{
-		//System.out.println("x: " + x + ", y: " + y);
-		mousePosX = x;
-		mousePosY = y;
+		mousePosX = x - (Gdx.graphics.getWidth() / 2.0f);
+		mousePosY = Gdx.graphics.getHeight() - y;
 		return true;
 	}
 	
@@ -551,7 +534,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean mouseMoved(int x, int y)
 	{
-		//System.out.println("x: " + x + ", y: " + (Gdx.graphics.getHeight() - y));
 		return true;
 	}
 	
