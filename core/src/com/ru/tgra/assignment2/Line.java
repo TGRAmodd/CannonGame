@@ -34,4 +34,16 @@ public class Line {
 									false, 0, this.vertexBuffer);
 		Gdx.gl.glDrawArrays(GL20.GL_LINES , 0, 4);
 	}
+	
+	public Coordinates getStartingPoint()
+	{
+		Coordinates start = new Coordinates(this.x1, this.y1);
+		return start;
+	}
+	
+	public Coordinates getEndPoint()
+	{
+		Coordinates end = new Coordinates(this.x2, this.y2);
+		return end;
+	}
 }
