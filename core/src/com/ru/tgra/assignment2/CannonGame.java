@@ -214,6 +214,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				float top 	 = Math.max(rectangles.get(i).getY1(), rectangles.get(i).getY2());
 				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
+					//System.out.println("ballposY: " + ballPosY + ", ballPosY + move_y: " + (ballPosY + move_y) + ", top: " + top);
 					if(ballPosY - move_y < bottom )
 					{
 						move_y *= -1;
@@ -226,7 +227,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 					{
 						move_x *= -1;
 					}
-					else if(ballPosY + move_y > top)
+					else if(ballPosY - move_y > top)
 					{
 						move_y *= -1;
 					}
@@ -453,7 +454,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
-		if(button == 0)
+		if(button == 1)
 		{
 			xLine1 = screenX;
 			yLine1 = screenY;
@@ -462,7 +463,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	        //System.out.println("touchDown");
 	        drawingLine = true;
 		}
-		else if(button == 1)
+		else if(button == 0)
 		{
 			xRect1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
 			yRect1 = Gdx.graphics.getHeight() - screenY;
@@ -476,7 +477,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		if(button == 0)
+		if(button == 1)
 		{
 			xLine2 = screenX;
 			yLine2 = screenY;
@@ -486,7 +487,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			Line line = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, xLine2, Gdx.graphics.getHeight()-yLine2, positionLoc);
 			Lines.add(line);
 		}
-		else if(button == 1)
+		else if(button == 0)
 		{
 			xRect2 = screenX - (Gdx.graphics.getWidth() / 2.0f);
 			yRect2 = Gdx.graphics.getHeight() - screenY;
