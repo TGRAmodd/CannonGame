@@ -231,6 +231,14 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				//System.out.println("ballPosX: " + ballPosX + ", ballPosY: " + ballPosY);
 			}
 		}
+		
+		for (int i = 0; i < Lines.size(); i++)
+		{
+			if (collision(Lines.get(i)))
+			{
+				changeBallDirection(Lines.get(i));
+			}
+		}
 	}
 	
 	private void display()
@@ -299,7 +307,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
 			Lines.get(i).draw();
-			collition(Lines.get(i));
 		}
 		
 		modelMatrix.loadIdentityMatrix();
@@ -335,7 +342,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 	
-	public boolean collition(Line line)
+	public boolean collision(Line line)
 	{
 		Coordinates startingPoint = line.getStartingPoint();
 		Coordinates endPoint = line.getEndPoint();
@@ -376,9 +383,25 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 		else
 		{
-			//System.out.println("No collition!");
+			//System.out.println("No collision!");
 			return false;
 		}
+	}
+	
+	public void changeBallDirection(Line line)
+	{
+		Vector2 parallelVec = new Vector2(line.getEndPoint().getX() - line.getStartingPoint().getX(), line.getEndPoint().getY() - line.getStartingPoint().getY());
+		Vector2 normal = new Vector2(- parallelVec.x, - parallelVec.y);
+		
+		float normalLength = normal.len();
+		normal.x /= normalLength;
+		normal.y /= normalLength;
+		
+		float normDist = move_x * normal.x + move_y * normal.y;
+		move_x -= 2.0 * normDist * normal.x;
+		move_y -= 2.0 * normDist * normal.y;
+		move_x = -move_x;
+		move_y = -move_y;
 	}
 	
 	public boolean goalReached()
