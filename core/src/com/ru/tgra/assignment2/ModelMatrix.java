@@ -22,9 +22,9 @@ public class ModelMatrix extends Matrix {
 		matrix.put(1, Sx * matrix.get(1));
 		matrix.put(2, Sx * matrix.get(2));
 
-		matrix.put(4, Sx * matrix.get(3));
-		matrix.put(5, Sx * matrix.get(4));
-		matrix.put(6, Sx  * matrix.get(5));
+		matrix.put(4, Sx * matrix.get(4));
+		matrix.put(5, Sx * matrix.get(5));
+		matrix.put(6, Sx  * matrix.get(6));
 
 		matrix.put(8, Sx * matrix.get(8));
 		matrix.put(9, Sx * matrix.get(9));
