@@ -67,6 +67,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	InputProcessor inputProcessor;
 	
 	ArrayList<Line> Lines = new ArrayList<Line>();
+	ArrayList<RectangleGraphic> rectangles = new ArrayList<RectangleGraphic>();
 
 	@Override
 	public void create () {
@@ -137,7 +138,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		
 		CircleGraphic.create(positionLoc);
 		CannonGraphic.create(positionLoc);
-		RectangleGraphic.create(positionLoc);
 		GoalGraphic.create(positionLoc);
 		
 		modelMatrix = new ModelMatrix();
@@ -186,22 +186,24 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			{
 				xAngle = (-angle);
 				yAngle = (90.0f - Math.abs(angle));
+
 				ballPosX = (xAngle / 90.0f) * 20.0f;
 				ballPosY = (yAngle / 90.0f) * 30.0f;
 				move_x = xAngle * 5 * deltaTime;
 				move_y = yAngle * 5 * deltaTime;
+
 			}
 			zPressed = true;
 		}
 		
 		if (zPressed == true)
 		{
-			for(int i = 0; i < rect_x.size(); i++)
+			for(int i = 0; i < rectangles.size(); i++)
 			{
-				float left 	 = rect_x.get(i) - 50;
-				float right  = rect_x.get(i) + 50;
-				float bottom = rect_y.get(i) - 50;
-				float top 	 = rect_y.get(i) + 50;
+				float left 	 = rectangles.get(i).getX1();
+				float right  = rectangles.get(i).getX2();
+				float bottom = rectangles.get(i).getY1();
+				float top 	 = rectangles.get(i).getY2();
 				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
 					if(ballPosY - move_y < bottom )
@@ -229,11 +231,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				//System.out.println("ballPosX: " + ballPosX + ", ballPosY: " + ballPosY);
 			}
 		}
-		//System.out.println("xPos: " + xPos + ", yPos: " + yPos + ", goalPosX: " + goalPosX + ", goalPosY: "+ goalPosY);
-		//goalReached();
-		
-		
-		
 	}
 	
 	private void display()
@@ -265,23 +262,36 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();		
 		
-		modelMatrix.loadIdentityMatrix();
-		modelMatrix.addTranslation(512.0f, 0, 0);
-		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
-		modelMatrix.addTranslation(300, 200, 0);
-		rect_x.add(300.0f);
-		rect_y.add(200.0f);
-		modelMatrix.setShaderMatrix(modelMatrixLoc);
-		RectangleGraphic.drawSolidSquare();
+		/* These if sentences are a temporary solution to make our
+		 * game faster by not constantly adding the same rectangle
+		 * in the rectangles array in each render frame.
+		 * They will be removed once we add a rectangle by drawing
+		 * it on screen.
+		 * Best regards, Jerry
+		 * */
+		if(rectangles.isEmpty())
+		{
+			RectangleGraphic rect = new RectangleGraphic(250.0f, 150.0f, 350.0f, 250.0f, positionLoc);
+			rectangles.add(rect);
+		}
+		if(rectangles.size() == 1)
+		{
+			RectangleGraphic rect2 = new RectangleGraphic(-500.0f, 400.0f, -200.0f, 600.0f, positionLoc);
+			rectangles.add(rect2);
+		}
 		
-		modelMatrix.loadIdentityMatrix();
-		modelMatrix.addTranslation(512.0f, 0, 0);
-		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);
-		modelMatrix.addTranslation(-300, 200, 0);
-		rect_x.add(-300.0f);
-		rect_y.add(200.0f);
-		modelMatrix.setShaderMatrix(modelMatrixLoc);
-		RectangleGraphic.drawSolidSquare();
+		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);	
+		for (int i = 0; i < rectangles.size(); i++) 
+		{
+			modelMatrix.loadIdentityMatrix();
+			modelMatrix.addTranslation(512.0f, 0, 0);
+			float x = (rectangles.get(i).getX2() + rectangles.get(i).getX1()) / 2.0f;
+			float y = (rectangles.get(i).getY2() + rectangles.get(i).getY1()) / 2.0f;
+			modelMatrix.addTranslation(x, y, 0);
+			modelMatrix.setShaderMatrix(modelMatrixLoc);
+			rectangles.get(i).drawSolidSquare();
+		}
+		
 		
 		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.6f, 0.9f, 1);
 		for (int i = 0; i < Lines.size(); i++)
@@ -321,10 +331,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			Line tempLine = new Line(xLine1, Gdx.graphics.getHeight()-yLine1, mousePosX, Gdx.graphics.getHeight()-mousePosY, positionLoc);
 			modelMatrix.loadIdentityMatrix();
 			modelMatrix.setShaderMatrix(modelMatrixLoc);
-			//Lines.add(tempLine);
-			
-			//System.out.println("mousePosX: " + mousePosX + ", mousePosY: " + mousePosY);
-			
 			tempLine.draw();
 		}
 	}
