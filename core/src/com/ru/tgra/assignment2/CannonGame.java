@@ -207,8 +207,13 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 				float top 	 = Math.max(rectangles.get(i).getY1(), rectangles.get(i).getY2());
 				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
-					//System.out.println("ballposY: " + ballPosY + ", ballPosY + move_y: " + (ballPosY + move_y) + ", top: " + top);
+					//System.out.println("ballposY: " + ballPosY + ", ballPosY - move_y: " + (ballPosY - move_y) + ", top: " + top);
+					System.out.println("ballposX: " + ballPosX + ", ballPosX + move_x: " + Math.abs(ballPosX + move_x) + ", right: " + right);
 					if(ballPosY - move_y < bottom )
+					{
+						move_y *= -1;
+					}
+					else if(ballPosY - move_y > top)
 					{
 						move_y *= -1;
 					}
@@ -216,13 +221,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 					{
 						move_x *= -1;
 					}
-					else if(Math.abs(ballPosX + move_x) > Math.abs(right))
+					else if(Math.abs(ballPosX - move_x) > Math.abs(right))
 					{
 						move_x *= -1;
-					}
-					else if(ballPosY - move_y > top)
-					{
-						move_y *= -1;
 					}
 				}
 			}
