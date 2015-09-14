@@ -7,7 +7,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
-
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -15,8 +14,6 @@ import com.badlogic.gdx.utils.BufferUtils;
 
 public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
-	private FloatBuffer vertexBuffer;
-
 	private FloatBuffer modelMatrixBuffer;
 	private FloatBuffer projectionMatrix;
 
@@ -44,9 +41,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	
 	private float move_x;
 	private float move_y;
-	
-	ArrayList<Float> rect_x = new ArrayList<Float>();
-	ArrayList<Float> rect_y = new ArrayList<Float>();
 	
 	private float xLine1;
 	private float xLine2;
@@ -247,11 +241,6 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			move_y = 0.0f;
 			clearObstacles();
 		}
-	}
-	
-	private void updateCannon()
-	{
-		
 	}
 	
 	private void display()
@@ -521,52 +510,17 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	}
 	
 	@Override
-	public boolean keyUp(int x)
-	{
-		return false;
-	}
+	public boolean keyUp(int x) { return false; }
 	
 	@Override
-	public boolean keyDown(int x)
-	{
-		return false;
-	}
+	public boolean keyDown(int x) { return false; }
 	
 	@Override
-	public boolean mouseMoved(int x, int y)
-	{
-		return true;
-	}
+	public boolean mouseMoved(int x, int y) { return true; }
 	
 	@Override
-	public boolean keyTyped(char x)
-	{
-		return false;
-	}
+	public boolean keyTyped(char x) { return false; }
 	
 	@Override
-	public boolean scrolled(int x)
-	{
-		return false;
-	}
-
-
-	private void clearModelMatrix()
-	{
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
-	}
-	private void setModelMatrixTranslation(float xTranslate, float yTranslate)
-	{
-		modelMatrixBuffer.put(12, xTranslate);
-		modelMatrixBuffer.put(13, yTranslate);
-
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
-	}
-	private void setModelMatrixScale(float xScale, float yScale)
-	{
-		modelMatrixBuffer.put(0, xScale);
-		modelMatrixBuffer.put(5, yScale);
-
-		Gdx.gl.glUniformMatrix4fv(modelMatrixLoc, 1, false, modelMatrixBuffer);
-	}
+	public boolean scrolled(int x) { return false; }
 }
