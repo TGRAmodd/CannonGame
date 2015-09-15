@@ -1,5 +1,9 @@
-package com.ru.tgra.assignment2;
+/* Authors: Jörundur Jörundsson & Sverrir Páll Sverrisson
+ * Course: Computer Graphics (TGRA)
+ * Teacher: Kári Halldórsson
+ * */
 
+package com.ru.tgra.assignment2;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -7,8 +11,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
-
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -197,14 +199,18 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		{
 			for(int i = 0; i < rectangles.size(); i++)
 			{
+				/* The x1 and x2 variables are not necessarily left and right, instead
+				 * they depend on whether the user drew a rectangle from left to right
+				 * or right to left. The same can be said for the y1 and y2 variables
+				 * not necessarily being bottom and top.
+				 * Because of this we take the minimum and maximum values of these variables
+				 * as seen in the code here below.*/
 				float left 	 = Math.min(rectangles.get(i).getX1(), rectangles.get(i).getX2());
 				float right  = Math.max(rectangles.get(i).getX1(), rectangles.get(i).getX2());
 				float bottom = Math.min(rectangles.get(i).getY1(), rectangles.get(i).getY2());
 				float top 	 = Math.max(rectangles.get(i).getY1(), rectangles.get(i).getY2());
 				if (ballPosY >= bottom && ballPosY <= top && ballPosX >= left && ballPosX <= right)
 				{
-					//System.out.println("ballposY: " + ballPosY + ", ballPosY - move_y: " + (ballPosY - move_y) + ", top: " + top);
-					//System.out.println("ballposX: " + ballPosX + ", ballPosX + move_x: " + Math.abs(ballPosX + move_x) + ", right: " + right);
 					if(ballPosY - move_y < bottom )
 					{
 						move_y *= -1;
@@ -213,6 +219,12 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 					{
 						move_y *= -1;
 					}
+					/* Our y coordinates are from 0 to the height of the screen
+					 * but our x coordinates have the value 0 at the bottom middle
+					 * of our screen, thus being negative left of the middle and
+					 * positive to the right of it. Because of this we take the absolute
+					 * value of the x position of our ball when deciding whether or not
+					 * we need to bounce in the opposite direction.*/
 					else if(Math.abs(ballPosX - move_x) < Math.abs(left))
 					{
 						move_x *= -1;
@@ -235,6 +247,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			}
 		}
 		
+		/* If our ball goes out of bounds or it reaches the goal
+		 * we put it back into it's initial position and clear all
+		 * obstacles the user put in.*/
 		if (ballOutOfBounds() || goalReached())
 		{
 			ballPosX = 0.0f;
@@ -251,6 +266,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		modelMatrix.loadIdentityMatrix();
+		/* We make this translation because we wanted the x
+		 * coordinates to be 0 in the middle of the screen */
 		modelMatrix.addTranslation(512.0f, 0, 0);
 
 		//Drawing the ball
@@ -268,9 +285,9 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
 		CannonGraphic.drawCannon();		
 		
-		/* These if sentences are a solution to make our
-		 * game faster by not constantly adding the same rectangle
-		 * in the rectangles array in each render frame.
+		/* Adding the obstacles that are always on the screen.
+		 * These are the obstacles our user has to avoid in order
+		 * to reach the goal.
 		 * */
 		if (rectangles.isEmpty())
 		{
@@ -288,6 +305,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			lines.add(line);
 		}
 		
+		/* Drawing the user's rectangles */
 		Gdx.gl.glUniform4f(colorLoc, 0.5f, 0.3f, 0.6f, 1);	
 		for (int i = 0; i < rectangles.size(); i++) 
 		{
@@ -300,7 +318,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			rectangles.get(i).drawSolidSquare();
 		}
 		
-		
+		/* Drawing the user's lines */
 		Gdx.gl.glUniform4f(colorLoc, 0.4f, 0.6f, 0.9f, 1);
 		for (int i = 0; i < lines.size(); i++)
 		{
@@ -310,6 +328,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 			lines.get(i).draw();
 		}
 		
+		/* Draw our goal */
 		modelMatrix.loadIdentityMatrix();
 		modelMatrix.addTranslation(512.0f, 0, 0);
 		modelMatrix.addTranslation(300.0f, 650.0f, 0);
@@ -317,9 +336,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		goalPosY = 650.0f;
 		Gdx.gl.glUniform4f(colorLoc, 0.3f, 0.8f, 0.3f, 1);
 		modelMatrix.setShaderMatrix(modelMatrixLoc);
-		GoalGraphic.drawGoal();
-		
-		//Gdx.gl.glVertexAttribPointer(positionLoc, 2, GL20.GL_FLOAT, false, 0, vertexBuffer);	
+		GoalGraphic.drawGoal();		
 	}
 
 	@Override
@@ -370,6 +387,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 
+	/* A collision detection function that the detects the more
+	 * complicated diagonal collisions of hitting lines. */
 	public boolean collision(Line line)
 	{
 		Coordinates startingPoint = line.getStartingPoint();
@@ -408,6 +427,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 	
+	/* A function that handles changing the ball's direction
+	 * when hitting a line */
 	public void changeBallDirection(Line line)
 	{
 		Vector2 parallelVec = new Vector2(line.getEndPoint().getX() - line.getStartingPoint().getX(), line.getEndPoint().getY() - line.getStartingPoint().getY());
@@ -424,6 +445,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		move_y = -move_y;
 	}
 	
+	/* This function gets called when the ball collides with the goal*/
 	public boolean goalReached()
 	{
 		float distanceX = goalPosX - ballPosX;
@@ -459,6 +481,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 	
+	/* Check whether or not our ball is in it's initial position */
 	public boolean initialPosition()
 	{
 		if (ballPosX == 0.0f && ballPosY == 0.0f && move_x == 0.0f && move_y == 0.0f)
@@ -474,14 +497,20 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
+		/* We only want to draw shapes when we the ball is in it's
+		 * original position. */
 		if(initialPosition())
 		{
+			/* If button is 1 then we are using the right mouse button
+			 * and thus drawing a line. */
 			if(button == 1)
 			{
 				xLine1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
 				yLine1 = Gdx.graphics.getHeight() - screenY;
 		        drawingLine = true;
 			}
+			/* If button is 0 then we are using the left mouse button
+			 * and thus drawing a rectangle. */
 			else if(button == 0)
 			{
 				xRect1 = screenX - (Gdx.graphics.getWidth() / 2.0f);
@@ -498,6 +527,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
+		/* We only want to draw shapes when we the ball is in it's
+		 * original position. */
 		if(initialPosition())
 		{
 			if(button == 1)
@@ -525,6 +556,8 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDragged(int x, int y, int z)
 	{
+		/* We only want to draw shapes when we the ball is in it's
+		 * original position. */
 		if(initialPosition())
 		{
 			mousePosX = x - (Gdx.graphics.getWidth() / 2.0f);
