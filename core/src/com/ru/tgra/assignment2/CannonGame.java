@@ -516,7 +516,7 @@ public class CannonGame extends ApplicationAdapter implements InputProcessor{
 	public boolean keyDown(int x) { return false; }
 	
 	@Override
-	public boolean mouseMoved(int x, int y) { return true; }
+	public boolean mouseMoved(int x, int y) { return false; }
 	
 	@Override
 	public boolean keyTyped(char x) { return false; }
